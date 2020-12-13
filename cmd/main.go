@@ -1,13 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"github.com/jayShepard/godis/pkg"
-	"net"
-	"os"
-	"strings"
-
 	"github.com/labstack/echo/v4"
+	"github.com/NinaDenisova/godis/pkg/service"
 )
 
 const (
@@ -21,10 +16,9 @@ func main() {
 
 	handlers := godis.NewGodis()
 
-	e.GET(/ping, godis.HandlePing)
-	e.GET(/echo, godis.HandleEcho)
-	e.GET(/get, godis.HandleGet)
-	e.GET(/set, godis.HandleSet)
+	e.GET("/ping", godis.HandlePing)
+	e.GET("/echo", godis.HandleEcho)
+	e.GET("/get", godis.HandleGet)
+	e.GET("/set", godis.HandleSet)
 
 }
-
