@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/JayShepard/godis/pkg/service"
+	"github.com/NinaDenisova/godis/pkg/service"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -15,6 +15,6 @@ func main() {
 	e.GET("/ping", godis.HandlePing)
 	e.GET("/echo", godis.HandleEcho)
 	e.GET("/get", godis.HandleGet)
-	e.GET("/set", godis.HandleSet)
+	e.POST("/set", godis.HandleSet)
 	e.Logger.Fatal(e.Start(":6379"))
 }

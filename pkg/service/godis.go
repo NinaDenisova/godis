@@ -1,7 +1,8 @@
 package service
 
 import (
-	"errors"
+	"fmt"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
@@ -17,48 +18,48 @@ func NewGodis() *Godis {
 	return &Godis{make(map[string]string)}
 }
 
-func (g *Godis) HandlePing(c echo.Context) (string, error) {
+func (g *Godis) HandlePing(c echo.Context) error {
 	cmd := new(Cmd)
 	if err := c.Bind(cmd); err != nil {
-		return "", err
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	if len(cmd.Messages) == 0 {
-		return "PONG", nil
+		return c.JSON(http.StatusOK, "PONG")
 	}
-	return cmd.Messages[0], nil
+	return c.JSON(http.StatusOK, cmd.Messages[0])
 }
 
-func (g *Godis) HandleEcho(c echo.Context) (string, error) {
+func (g *Godis) HandleEcho(c echo.Context) error {
 
 	cmd := new(Cmd)
 	if err := c.Bind(cmd); err != nil {
-		return "", err
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Problem serializing params with body: %v", err))
 	}
 	if len(cmd.Messages) == 1 {
-		return cmd.Messages[0], nil
+		return c.JSON(http.StatusOK, cmd.Messages[0])
 	}
-	return "", errors.New("ERR wrong number of arguments for 'echo' command")
+	return echo.NewHTTPError(http.StatusBadRequest, "ERR wrong number of arguments for 'echo' command")
 }
 
-func (g *Godis) HandleSet(c echo.Context) (string, error) {
+func (g *Godis) HandleSet(c echo.Context) error {
 
 	cmd := new(Cmd)
 	if err := c.Bind(cmd); err != nil {
-		return "", err
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 	if len(cmd.Messages) < 2 {
-		return "", errors.New("ERR wrong number of arguments for 'set' command")
+		return echo.NewHTTPError(http.StatusBadRequest, "ERR wrong number of arguments for 'set' command")
 	}
 	g.db[cmd.Messages[0]] = cmd.Messages[1]
-	return "OK", nil
+	return c.JSON(http.StatusOK, "OK")
 }
 
-func (g *Godis) HandleGet(c echo.Context) (string, error) {
+func (g *Godis) HandleGet(c echo.Context) error {
 
 	cmd := new(Cmd)
 	if err := c.Bind(cmd); err != nil {
-		return "", err
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
-	return g.db[cmd.Messages[0]], nil
+	return c.JSON(http.StatusOK, g.db[cmd.Messages[0]])
 }
